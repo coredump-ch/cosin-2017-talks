@@ -1,0 +1,68 @@
+\documentclass[aspectratio=1610,t]{beamer}
+
+% Colors
+\usepackage{color}
+\definecolor{mainorange}{HTML}{EC811B}
+\definecolor{lightgrey}{HTML}{888888}
+
+% Syntax highlighting
+\usepackage{minted}
+\usepackage{alltt}
+\newcommand\hi[1]{{\color{mainorange} \textbf{#1}}}
+
+% Theme
+\usetheme[%
+	subsectionpage=progressbar,
+	numbering=fraction,
+	progressbar=foot,
+]{metropolis}
+
+% Customization
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamerfont{title}{size=\fontsize{30}{30}}
+\setbeamerfont{block title}{size=\large}
+\newcommand\sep{\textcolor{lightgrey}{\rule{\linewidth}{0.05mm}}}
+
+% Meta
+\title{The SpaceAPI, and Why Your Hackerspace Should Implement It}
+\date{\today}
+\author{Danilo Bargen (@dbrgn), Raphael Nestler (@rnestler)}
+\institute{Coredump Rapperswil}
+
+\begin{document}
+
+\pgfdeclareimage[width=\paperwidth]{bg}{background-dark.pdf}
+\usebackgroundtemplate{\pgfuseimage{bg}}
+\maketitle
+
+% ----------------------------------------------------------------- %
+
+\begin{frame}[plain,noframenumbering]
+	\frametitle{Outline}
+	\setcounter{tocdepth}{1}
+	\tableofcontents
+\end{frame}
+
+% ----------------------------------------------------------------- %
+
+\pgfdeclareimage[width=\paperwidth]{bg}{background-light.pdf}
+\usebackgroundtemplate{\pgfuseimage{bg}}
+
+\input{what_is_the_spaceapi/what_is_the_spaceapi}
+
+% ----------------------------------------------------------------- %
+
+{
+\setbeamertemplate{footline}{}
+\pgfdeclareimage[width=\paperwidth]{bg}{background-inverted.pdf}
+\usebackgroundtemplate{\pgfuseimage{bg}}
+\begin{frame}[standout]
+	\begin{centering}
+	{\Huge Thank you!}\\
+	{\normalsize \url{www.coredump.ch}}\\
+	{\footnotesize Slides: \url{https://github.com/coredump-ch/cosin-2017-talks}}\\
+	\end{centering}
+\end{frame}
+}
+
+\end{document}
