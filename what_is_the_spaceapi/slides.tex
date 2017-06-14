@@ -1,0 +1,93 @@
+\section{What is the SpaceAPI?}
+
+\begin{frame}{What is the SpaceAPI?}
+	Imagine that you're travelling in a foreign country. Bored from all the
+	tourist attraction, you start wondering -- are there any likeminded people
+	around?
+
+	\vspace{1em}
+
+	\centerline{
+		\includegraphics[width=0.5\textwidth]{what_is_the_spaceapi/hacker.jpg}
+	}
+
+	So you start looking for a hackerspace, makerspace or fablab. How can you find
+	out where the next such space is located?
+
+	\vspace{1em}
+
+	\tiny{Photo: CC BY-NC 2.0 Brian Klug}
+\end{frame}
+
+\begin{frame}{What is the SpaceAPI?}
+	You found a hackerspace not too far away. There are a few things that you
+	would typically want to know about that space:
+
+	\begin{itemize}
+		\item	What's the website URL of the space?
+		\pause
+		\item Where is the space located?
+		\pause
+		\item How can you contact the people from the space?
+		\pause
+		\item Is the space currently open?
+		\pause
+		\item How many people are there right now?
+		\pause
+		\item What projects do the people in the space work on?
+		\pause
+		\item How much Club Mate is still left?
+	\end{itemize}
+
+	\pause
+
+	That's the questions the SpaceAPI tries to answer.
+\end{frame}
+
+\begin{frame}[c]{The SpaceAPI}
+	The SpaceAPI is a specification for a JSON object that contains all this
+	information in machine readable code.
+\end{frame}
+
+\begin{frame}[fragile]{Minimal Example}
+	\begin{minted}[samepage=true,fontsize=\footnotesize]{json}
+{
+    "api": "0.13",
+    "space": "coredump",
+    "url": "https://www.coredump.ch/",
+    "contact": {
+        "email": "vorstand@lists.coredump.ch",
+        "irc": "irc://freenode.net/#coredump",
+        "twitter": "@coredump_ch"
+    },
+    "issue_report_channels": ["email", "twitter"],
+    "location": {
+        "address": "Zürcherstrasse 6, 8640 Rapperswil, Switzerland",
+        "lat": 47.22939, "lon": 8.82041
+    },
+    "logo": "https://www.coredump.ch/wp-content/uploads/2016/11/logo.png",
+    "state": { "open": true, "message": "7 people present" }
+}
+	\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Versioning}
+Every SpaceAPI document must contain the specification version:
+
+	\begin{minted}[samepage=true,fontsize=\footnotesize]{javascript}
+{
+    "api": "0.13",
+    // ...
+}
+	\end{minted}
+
+Current version is 0.13, we're already working on the next revision. More on
+that later.
+\end{frame}
+
+\begin{frame}[fragile]{General information about the space}
+
+	- name
+	- website
+	- logo
+\end{frame}
