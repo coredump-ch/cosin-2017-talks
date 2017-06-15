@@ -116,3 +116,99 @@ def update():
         \item Make it reusable for other hackerspaces
     \end{itemize}
 \end{frame}
+
+\begin{frame}[c]{Current Status}
+    \begin{itemize}
+        \item spaceapi-rs\footnote{\url{https://github.com/coredump-ch/spaceapi-rs}}
+            \begin{itemize}
+                \item SpaceAPI schema encoded in the type system
+                \item Serialization / Deserialization
+            \end{itemize}
+        \item spaceapi-server-rs\footnote{\url{https://github.com/coredump-ch/spaceapi-server-rs}}
+            \begin{itemize}
+                \item Server implemented with Iron
+                \item Reads sensor values from Redis DB
+                \item Allows updating sensor values
+            \end{itemize}
+        \item status\footnote{\url{https://github.com/coredump-ch/status}}
+            \begin{itemize}
+                \item Implementation for coredump
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\subsection{spaceapi-rs}
+
+\begin{frame}[fragile]{Data Types}
+    \begin{minted}{rust}
+pub struct Status {
+    pub api: String,
+    pub space: String,
+    pub logo: String,
+    pub url: String,
+    pub location: Location,
+    pub contact: Contact,
+    ...
+}
+    \end{minted}
+\end{frame}
+
+\begin{frame}[c]{Difficulties}
+    \begin{itemize}
+        \item SpaceAPI specs don't allow null for optional entries
+        \item \texttt{rustc\_serialize} serialized `Option<T>` to null \\
+            \pause$\rightarrow$ We rolled our own serialization with an `Optional<T>` type
+        \item Serde solved this quite elegant
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Serde}
+    \begin{minted}{rust}
+#[derive(Serialize, Deserialize, Default, Debug, Clone)]
+pub struct Location {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub address: Option<String>,
+    pub lat: f64,
+    pub lon: f64,
+}
+    \end{minted}
+    \pause\begin{minted}{rust}
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Sensors {
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub people_now_present: Vec<PeopleNowPresentSensor>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub temperature: Vec<TemperatureSensor>,
+}
+    \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Find the problem}
+    \includegraphics[height=0.98\textheight]{./spaceapi_in_rust/events.png}
+\end{frame}
+
+\begin{frame}[c,fragile]{Keywords\ldots}
+    Rust doesn't like keywords as identifier\ldots
+    \begin{minted}{shell}
+error: expected identifier, found keyword `type`
+  --> src/status.rs:52:9
+   |
+52 |     pub type: String,
+   |         ^^^^
+    \end{minted}
+\end{frame}
+
+\begin{frame}[c,fragile]{Serde to the rescue!}
+    \begin{minted}{rust}
+#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+pub struct Event {
+    pub name: String,
+    #[serde(rename = "type")]
+    pub _type: String,
+    pub timestamp: u64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub extra: Option<String>,
+}
+    \end{minted}
+\end{frame}
+
