@@ -47,26 +47,31 @@
 \begin{frame}[c]{The SpaceAPI}
 	The SpaceAPI is a specification for a JSON object that contains all this
 	information in machine readable code.
+
+	\vspace{1em}
+	\url{http://spaceapi.net/}\\\url{https://spacedirectory.org/} (More on that later...)
+	\vspace{1em}
+	
 \end{frame}
 
 \begin{frame}[fragile]{Minimal Example}
-	\begin{minted}[samepage=true,fontsize=\footnotesize]{json}
+	\begin{minted}[samepage=true,fontsize=\footnotesize,autogobble]{json}
 {
-    "api": "0.13",
-    "space": "coredump",
-    "url": "https://www.coredump.ch/",
-    "contact": {
-        "email": "vorstand@lists.coredump.ch",
-        "irc": "irc://freenode.net/#coredump",
-        "twitter": "@coredump_ch"
-    },
-    "issue_report_channels": ["email", "twitter"],
-    "location": {
-        "address": "Zürcherstrasse 6, 8640 Rapperswil, Switzerland",
-        "lat": 47.22939, "lon": 8.82041
-    },
-    "logo": "https://www.coredump.ch/wp-content/uploads/2016/11/logo.png",
-    "state": { "open": true, "message": "7 people present" }
+  "api": "0.13",
+  "space": "coredump",
+  "url": "https://www.coredump.ch/",
+  "contact": {
+    "email": "vorstand@lists.coredump.ch",
+    "irc": "irc://freenode.net/#coredump",
+    "twitter": "@coredump_ch"
+  },
+  "issue_report_channels": ["email", "twitter"],
+  "location": {
+    "address": "Zürcherstrasse 6, 8640 Rapperswil, Switzerland",
+    "lat": 47.22939, "lon": 8.82041
+  },
+  "logo": "https://www.coredump.ch/wp-content/uploads/2016/11/logo.png",
+  "state": { "open": true, "message": "7 people present" }
 }
 	\end{minted}
 \end{frame}
@@ -74,11 +79,11 @@
 \begin{frame}[fragile]{Versioning}
 Every SpaceAPI document must contain the specification version:
 
-	\begin{minted}[samepage=true,fontsize=\footnotesize]{javascript}
-{
+	\begin{minted}[samepage=true,fontsize=\footnotesize,autogobble]{javascript}
+  {
     "api": "0.13",
     // ...
-}
+  }
 	\end{minted}
 
 Current version is 0.13, we're already working on the next revision. More on
@@ -87,7 +92,163 @@ that later.
 
 \begin{frame}[fragile]{General information about the space}
 
-	- name
-	- website
-	- logo
+The space can expose information like location and contact details:
+
+	\begin{minted}[samepage=true,fontsize=\footnotesize,autogobble]{javascript}
+  {
+    "space": "coredump",
+    "url": "https://www.coredump.ch/",
+    "contact": {
+      "email": "vorstand@lists.coredump.ch",
+      "irc": "irc://freenode.net/#coredump",
+      "twitter": "@coredump_ch"
+    },
+    "location": {
+      "address": "Zürcherstrasse 6, 8640 Rapperswil, Switzerland",
+      "lat": 47.22939,
+      "lon": 8.82041
+    },
+    "logo": "https://www.coredump.ch/wp-content/uploads/2016/11/logo.png",
+    // ...
+  }
+	\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Publish Events}
+
+A space can publish events which happened recently and which could be
+interesting to the public.
+
+	\begin{minted}[samepage=true,fontsize=\footnotesize,autogobble]{javascript}
+  {
+    "events": [
+      {"name": "Door", "type": "unlocked", "timestamp": 1234567},
+      {"name": "Fridge", "type": "club_mate_consumed", "timestamp": 1234568},
+      {"name": "Door", "type": "locked", "timestamp": 1234569},
+      // ...
+    ]
+  }
+	\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Publish Sensor Data}
+
+A space can publish dynamic sensor data.
+
+	\begin{minted}[samepage=true,fontsize=\footnotesize,autogobble]{javascript}
+  {
+    "sensors": {
+      "temperature": [
+        {"location": "Soldering area", "value": 23.42, "unit": "°C"},
+        {"location": "Fridge", "value": 281.78, "unit": "K"},
+      ],
+      "people_now_present": [
+        {"location": "Hackerspace", "value": 7},
+      ],
+      "beverage_supply": [
+        {"name": "Beer", "value": 42, "unit": "btl"},
+        {"name": "Club Mate", "value": 4, "unit": "crt"},
+      ],
+      // ...
+    }
+  }
+	\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Custom Fields}
+	Applications can use custo fields if they prepend the key names with ``ext\_''.
+
+	(But often it's better to propose a new standardized field to the API.)
+\end{frame}
+
+
+\section{Applications}
+
+\begin{frame}{Applications}
+	If the SpaceAPI is really useful, what are some practical applications?
+
+	We'll take a look at some of them.
+\end{frame}
+
+\begin{frame}{My Hackerspace (Android App)}
+	\textit{My Hackerspace} is an Android app to check the information and status
+	of any hackerspace. Select your space and start to monitor it. Available on
+	F-Droid, Play Store and Github.
+
+	\vspace{1em}
+	\centerline{
+		\includegraphics[width=0.75\textwidth]{what_is_the_spaceapi/app-my-hackerspace.png}
+	}
+
+\end{frame}
+
+\begin{frame}{Space API Statistics}
+	There is a website that collects historical statistics about the opening
+	status of hackerspaces: \url{http://spaceapi-stats.n39.eu/}
+
+	\vspace{1em}
+	\centerline{
+		\includegraphics[width=0.75\textwidth]{what_is_the_spaceapi/app-statistics.png}
+	}
+
+\end{frame}
+
+\begin{frame}{Spacer}
+	Map of all spaces worldwide, with opening status indication:
+	\url{https://spacer.nooitaf.nl/}
+
+	\vspace{1em}
+	\centerline{
+		\includegraphics[width=0.9\textwidth]{what_is_the_spaceapi/app-spacer.png}
+	}
+
+\end{frame}
+
+\begin{frame}{Wordpress Widget}
+	We wrote a small Wordpress Widget that fetches the current opening status with
+	JS and displays it on a website.
+
+	\vspace{1em}
+	\centerline{
+		\includegraphics[width=\textwidth]{what_is_the_spaceapi/app-wp.png}
+	}
+
+\end{frame}
+
+\begin{frame}{CCC Spaces Map}
+	The CCC has created a map listing all spaces that have something like
+	\texttt{"ext\_ccc": "chaostreff"} in their API response.
+
+	\vspace{1em}
+	\centerline{
+		\includegraphics[width=0.9\textwidth]{what_is_the_spaceapi/app-ccc.png}
+	}
+
+\end{frame}
+
+
+
+\section{Implementing the SpaceAPI}
+
+\begin{frame}{How to Implement?}
+	There are a few possiblities:
+	\pause
+	\begin{itemize}
+		\item Put a static JSON file on your webserver	
+		\pause
+		\item Dynamically generate a JSON file with a custom script
+		\pause
+		\item Create your endpoint at \url{http://spaceapi.net/new/}
+		\pause
+		\item Use spaceapi-server-rs (Hint: Attend our follow-up talk!)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{How to Publish?}
+	All SpaceAPI endpoints are collected in the Directory.
+
+	Official directory is at \url{http://spaceapi.net/directory.json}, but it's
+	often down or buggy.
+
+	Better use \url{https://spaceapi.fixme.ch/directory.json} instead.
 \end{frame}
