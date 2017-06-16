@@ -37,7 +37,7 @@
 \begin{frame}[c]{Requirement}
     \begin{itemize}
         \item Serve SpaceAPI JSON data
-        \item Mostly static except state and sensors
+        \item Mostly static except state, sensors and events
         \item Endpoint to update sensor data
     \end{itemize}
 \end{frame}
@@ -88,7 +88,7 @@ def update():
 \begin{frame}[c]{Hacky, but actually worked!}
     \begin{itemize}
         \item Hacky but worked
-        \item Probably a race conditions with the file access?
+        \item Probably a race condition with the file access?
         \item Ugly to extend with further sensors
     \end{itemize}
 \end{frame}
@@ -164,7 +164,7 @@ pub struct Status {
 
 \begin{frame}[fragile]{Serde}
     \begin{minted}{rust}
-#[derive(Serialize, Deserialize, Default, Debug, Clone)]
+#[derive(Serialize, Deserialize, ...)]
 pub struct Location {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub address: Option<String>,
@@ -173,7 +173,7 @@ pub struct Location {
 }
     \end{minted}
     \pause\begin{minted}{rust}
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, ...)]
 pub struct Sensors {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub people_now_present: Vec<PeopleNowPresentSensor>,
@@ -200,7 +200,7 @@ error: expected identifier, found keyword `type`
 
 \begin{frame}[c,fragile]{Serde to the rescue!}
     \begin{minted}{rust}
-#[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, ...)]
 pub struct Event {
     pub name: String,
     #[serde(rename = "type")]
