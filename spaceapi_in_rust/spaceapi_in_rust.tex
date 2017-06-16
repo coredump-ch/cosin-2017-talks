@@ -212,3 +212,118 @@ pub struct Event {
     \end{minted}
 \end{frame}
 
+\subsection{spaceapi-server-rs}
+
+\begin{frame}[c]{Server}
+    \begin{itemize}
+        \item spaceapi-rs\footnote{\url{https://github.com/coredump-ch/spaceapi-rs}}
+            \begin{itemize}
+                \item SpaceAPI schema encoded in the type system
+                \item Serialization / Deserialization
+            \end{itemize}
+            \begin{framed}
+            \item spaceapi-server-rs\footnote{\url{https://github.com/coredump-ch/spaceapi-server-rs}}
+                \begin{itemize}
+                    \item Server implemented with Iron
+                    \item Reads sensor values from Redis DB
+                    \item Allows updating sensor values
+                \end{itemize}
+            \end{framed}
+        \item status\footnote{\url{https://github.com/coredump-ch/status}}
+            \begin{itemize}
+                \item Implementation for coredump
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[c]{Server}
+    \begin{itemize}
+        \item Webframework: iron\footnote{\url{http://ironframework.io/}};
+            Maps HTTP nicely to the type system
+        \item DB: r2d2-redis\footnote{\url{https://github.com/sorccu/r2d2-redis}}
+        \item Should be usable by every hackerspace
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[c]{Dynamic Values}
+    \begin{itemize}
+        \item Our SpaceAPI types do not allow missing data.  How do we handle
+            dynamic data from the DB? \\
+            \pause $\rightarrow$ \texttt{SensorTemplate}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{SensorTemplate}
+    \begin{minted}[fontsize=\footnotesize]{rust}
+/// A trait for all possible sensor templates.
+///
+/// A sensor template is like a sensor struct, but without the actual data in it.
+/// A `SensorTemplate` is capable of registering itself in a `Sensors` struct.
+pub trait SensorTemplate : Send+Sync {
+    fn to_sensor(&self, value_str: &str, sensors: &mut Sensors);
+}
+    \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{An Example}
+    \begin{minted}{rust}
+pub struct PeopleNowPresentSensor {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub location: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub names: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    pub value: u64,
+}
+    \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{An Example}
+    \begin{minted}{rust}
+pub struct PeopleNowPresentSensorTemplate {
+    pub location: Option<String>,
+    pub name: Option<String>,
+    pub names: Option<Vec<String>>,
+    pub description: Option<String>,
+}
+    \end{minted}
+\end{frame}
+
+
+\begin{frame}[fragile]{Implementing SensorTemplate}
+    \begin{minted}[fontsize=\footnotesize]{rust}
+impl SensorTemplate for PeopleNowPresentSensorTemplate {
+    fn to_sensor(&self, value_str: &str, sensors: &mut Sensors) {
+        if value_str.parse::<u64>().map(|value|{
+            let sensor = PeopleNowPresentSensor {
+                location: self.location.clone(),
+                name: self.name.clone(),
+                names: self.names.clone(),
+                description: self.description.clone(),
+                value: value,
+            };
+
+            sensors.people_now_present.push(sensor);
+        }).is_err() {
+            warn!("Could not parse value '{}', omiting PeopleNowPresentSensor", value_str);
+        }
+    }
+}
+    \end{minted}
+\end{frame}
+
+
+\begin{frame}[fragile]{StatusModifier}
+    To further adapt the server to your needs
+    \begin{minted}{rust}
+/// `StatusModifier`s are used to modify the status
+pub trait StatusModifier: Send + Sync {
+    /// Called after all registered sensors are read
+    fn modify(&self, status: &mut api::Status);
+}
+    \end{minted}
+\end{frame}
+
