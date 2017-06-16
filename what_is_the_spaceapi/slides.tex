@@ -156,7 +156,7 @@ A space can publish dynamic sensor data.
 \end{frame}
 
 \begin{frame}[fragile]{Custom Fields}
-	Applications can use custo fields if they prepend the key names with ``ext\_''.
+	Applications can use custom fields if they prepend the key names with ``ext\_''.
 
 	(But often it's better to propose a new standardized field to the API.)
 \end{frame}
@@ -226,6 +226,31 @@ A space can publish dynamic sensor data.
 
 \end{frame}
 
+\begin{frame}{People Counter at Coredump}
+
+	We wanted a way to keep track of the opening status at Coredump.
+	Our solution was a binary counter to keep track of the people present, based
+	on an ESP8266 board:
+	
+	\vspace{1em}
+	\centerline{
+		\includegraphics[width=0.6\textwidth]{what_is_the_spaceapi/counter.jpg}
+	}
+
+\end{frame}
+
+\begin{frame}{SpaceAPI status wall at Shackspace}
+
+	The Shackspace in Stuttgart has an awesome SpaceAPi status wall:
+	
+	\vspace{1em}
+	\centerline{
+		\includegraphics[width=0.6\textwidth]{what_is_the_spaceapi/statuswall.jpg}
+	}
+
+\end{frame}
+
+
 
 
 \section{Implementing the SpaceAPI}
@@ -244,6 +269,13 @@ A space can publish dynamic sensor data.
 	\end{itemize}
 \end{frame}
 
+\begin{frame}{How to Validate?}
+	There's a validator at \url{http://www.spaceapi.net/validator}.
+
+	We're writing a new one, draft of an API is at
+	\url{https://validator.spacedirectory.org/v1/}.
+\end{frame}
+
 \begin{frame}{How to Publish?}
 	All SpaceAPI endpoints are collected in the Directory.
 
@@ -251,4 +283,75 @@ A space can publish dynamic sensor data.
 	often down or buggy.
 
 	Better use \url{https://spaceapi.fixme.ch/directory.json} instead.
+
+	To publish your endpoint, send a pull request.
 \end{frame}
+
+
+\section{State of the Project}
+
+\begin{frame}{A Little History}
+
+	The SpaceAPI was started by @slopjong in April 2013. Right now 167 spaces are
+	in the directory.
+
+	\vspace{1em}
+	\centerline{
+		\includegraphics[width=\textwidth]{what_is_the_spaceapi/commit.png}
+	}
+
+	\pause
+
+	Activity peaked by the end of 2013. Since then, not much has happened.
+
+\end{frame}
+
+\begin{frame}{A Dying Project...}
+	The project didn't move forward anymore. Pull requests were left open for
+	years, bugs kept appearing.
+
+	We contacted the maintainer of the project to ask whether we could help, but
+	he's very busy with other projects and we couldn't find a way to get more
+	maintainers into the project.
+\end{frame}
+
+\begin{frame}{...and a Revival!}
+	So at the CCC Congress 2016 we friendly-forked the project and created the
+	\url{spacedirectory.org} website.
+
+	\vspace{2em}
+	\centerline{
+		\includegraphics[width=0.9\textwidth]{what_is_the_spaceapi/spacedirectory.png}
+	}
+\end{frame}
+
+\begin{frame}{Current Status}
+	\begin{itemize}
+		\item \checkmarkbox Host the directory on a reliable server
+			\pause
+		\item \checkmarkbox Add API documentation
+			\pause
+		\item \checkmarkbox Port JSON schema files to new format (IETF draft 4)
+			\pause
+		\item \checkmarkbox Create updated apps page that showcases existing projects
+			\pause
+		\item \emptybox Write a simple schema validator (work in progress)
+			\pause
+		\item \emptybox Add a "getting started" guide to the website (planning)
+			\pause
+		\item \emptybox Maybe rewrite the directory server (planning)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{The Future}
+	Some things are happening, maybe we can join back with the original SpaceAPI.
+
+	In any case, implement the API, help improving the Space Directory or hack on
+	our Rust SpaceAPI implementation!
+
+	\vspace{4em}
+
+	\centerline{\huge \url{spacedirectory.org}}
+\end{frame}
+
+\section{Questions?}
