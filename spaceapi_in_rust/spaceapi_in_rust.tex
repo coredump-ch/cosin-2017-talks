@@ -327,3 +327,56 @@ pub trait StatusModifier: Send + Sync {
     \end{minted}
 \end{frame}
 
+
+\subsection{Implement your own!}
+
+\begin{frame}[c]{Goals}
+    \begin{itemize}
+        \item Both \texttt{spaceapi-rs} and \texttt{spaceapi-server-rs} are
+            fully reusable libraries
+        \item Customizing happens at compile time
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Implement your own!}
+    \begin{minted}[fontsize=\footnotesize]{rust}
+let mut status = api::Status::new(
+    "coredump",
+    "https://www.coredump.ch/wp-content/uploads/2016/11/logo.png",
+    "https://www.coredump.ch/",
+    ...
+    );
+
+let mut server = SpaceapiServer::new((host, port), status, &*redis_url,
+                                     vec![Box::new(StateFromPeopleNowPresent)])
+                     .expect("Could not initialize server");
+
+server.register_sensor(Box::new(TemperatureSensorTemplate {
+    unit: "°C".into(),
+    location: "Hackerspace".into(),
+    name: Value("Raspberry CPU".into()),
+    description: Absent,
+}), "temperature_raspi".into());
+    \end{minted}
+\end{frame}
+
+
+\section{Future}
+
+\begin{frame}[c]{What are our plans?}
+    \begin{itemize}
+        \item Complete spaceapi-rs (Lots of missing API keys, contributors
+            welcome!)
+        \item Create reusable server binary (loads static info from file at
+            runtime) for other hackerspaces to use
+        \item ...
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[c]{Wanna help?}
+    We collect easy issues on both spaceapi-rs and spaceapi-server-rs
+    \begin{itemize}
+        \item \url{https://github.com/coredump-ch/spaceapi-rs/issues?q=is\%3Aissue+is\%3Aopen+label\%3Aeasy}
+        \item \url{https://github.com/coredump-ch/spaceapi-server-rs/issues?q=is\%3Aissue+is\%3Aopen+label\%3Aeasy}
+    \end{itemize}
+\end{frame}
