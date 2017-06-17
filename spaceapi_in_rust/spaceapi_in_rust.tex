@@ -139,6 +139,28 @@ def update():
 
 \subsection{spaceapi-rs}
 
+\begin{frame}[c]{spaceapi-rs}
+    \begin{itemize}
+        \begin{framed}
+        \item spaceapi-rs\footnote{\url{https://github.com/coredump-ch/spaceapi-rs}}
+            \begin{itemize}
+                \item SpaceAPI schema encoded in the type system
+                \item Serialization / Deserialization
+            \end{itemize}
+        \end{framed}
+        \item spaceapi-server-rs\footnote{\url{https://github.com/coredump-ch/spaceapi-server-rs}}
+            \begin{itemize}
+                \item Server implemented with Iron
+                \item Reads sensor values from Redis DB
+                \item Allows updating sensor values
+            \end{itemize}
+        \item status\footnote{\url{https://github.com/coredump-ch/status}}
+            \begin{itemize}
+                \item Implementation for coredump
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
 \begin{frame}[fragile]{Data Types}
     \begin{minted}{rust}
 pub struct Status {
@@ -204,7 +226,7 @@ error: expected identifier, found keyword `type`
 pub struct Event {
     pub name: String,
     #[serde(rename = "type")]
-    pub _type: String,
+    pub type_: String,
     pub timestamp: u64,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub extra: Option<String>,
@@ -340,16 +362,15 @@ pub trait StatusModifier: Send + Sync {
 
 \begin{frame}[fragile]{Implement your own!}
     \begin{minted}[fontsize=\footnotesize]{rust}
-let mut status = api::Status::new(
-    "coredump",
-    "https://www.coredump.ch/wp-content/uploads/2016/11/logo.png",
-    "https://www.coredump.ch/",
-    ...
-    );
+let status = StatusBuilder::new("coredump")
+    .logo("https://www.coredump.ch/logo.png")
+    .url("https://www.coredump.ch/")
+        ...
+    .build().expect("Creating status failed!");
 
-let mut server = SpaceapiServer::new((host, port), status, &*redis_url,
+let mut server = SpaceapiServer::new("128.0.0.1:8000", status, "redis://127.0.0.1/",
                                      vec![Box::new(StateFromPeopleNowPresent)])
-                     .expect("Could not initialize server");
+                                 .expect("Could not initialize server");
 
 server.register_sensor(Box::new(TemperatureSensorTemplate {
     unit: "°C".into(),
